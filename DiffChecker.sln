@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffChecker.Library", "DiffChecker.Library\DiffChecker.Library.csproj", "{209F4EF2-2778-491E-B20A-7B8CAEF85E39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffChecker.WebAPI", "DiffChecker.WebAPI\DiffChecker.WebAPI.csproj", "{D067C425-F106-4774-B2E4-F3DA5430E971}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffChecker.Tests", "DiffChecker.Tests\DiffChecker.Tests.csproj", "{470691BA-2CF9-4508-AEE7-F3C17E5B8FF6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{209F4EF2-2778-491E-B20A-7B8CAEF85E39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{209F4EF2-2778-491E-B20A-7B8CAEF85E39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{209F4EF2-2778-491E-B20A-7B8CAEF85E39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{209F4EF2-2778-491E-B20A-7B8CAEF85E39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D067C425-F106-4774-B2E4-F3DA5430E971}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D067C425-F106-4774-B2E4-F3DA5430E971}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D067C425-F106-4774-B2E4-F3DA5430E971}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D067C425-F106-4774-B2E4-F3DA5430E971}.Release|Any CPU.Build.0 = Release|Any CPU
+		{470691BA-2CF9-4508-AEE7-F3C17E5B8FF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{470691BA-2CF9-4508-AEE7-F3C17E5B8FF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{470691BA-2CF9-4508-AEE7-F3C17E5B8FF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{470691BA-2CF9-4508-AEE7-F3C17E5B8FF6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
