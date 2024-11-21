@@ -1,0 +1,6 @@
+@DiffChecker.API_HostAddress = http://localhost:5233
+
+GET {{DiffChecker.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
