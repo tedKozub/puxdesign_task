@@ -16,5 +16,7 @@ FE cast je dostupna po spusteni DiffChecker.BlazorApp. Pro spusteni MinimalAPI j
 (radeji bych v tomto pripade pouzil Typescript, to je vsak mimo scope zadani).
 
 ## Mozna vylepseni a dalsi rozvoj
-- Rozsireni FE o moznost zobrazovani detailu snapshotu
+- Sada unit testu pro DiffChecker.Library
+- Poradne otestovani prace s Paths na UNIX systemech
 - Vymena porovnavani snapshotu za vytvoreni hashe misto porovnani posledniho zapisu do souboru (pomalejsi porovnani, ale zamezi se napriklad pripadu, kdy uzivatel zapsal do souboru a zase obsah smazal)
+- Rozsireni FE o moznost zobrazovani detailu snapshotu
