@@ -6,12 +6,15 @@
 <h1>Diff Analysis</h1>
 
 <label for="directoryInput">Enter Directory Path:</label>
-<InputText id="directoryInput" @bind-Value="_directoryPath" placeholder="Enter directory path" @onkeydown="HandleKeyDown" />
+<InputText id="directoryInput" @bind-Value="_directoryPath" placeholder="Enter directory path" @onkeydown="HandleKeyDown"/>
 
-
-@if (_diff == null && string.IsNullOrWhiteSpace(_directoryPath))
+@if (!string.IsNullOrWhiteSpace(_errorMessage))
 {
-<p role="status">Please enter a directory path.</p>
+    <p role="status">@_errorMessage</p>
+}
+else if (_diff == null && string.IsNullOrWhiteSpace(_directoryPath))
+{
+    <p role="status">Please enter a directory path.</p>
 }
 
 else if (_diff == null)
@@ -103,12 +106,20 @@ else
 @code {
     private string _directoryPath = "";
     private DirectoryDiff? _diff = null;
+    private string _errorMessage = "";
 
     private void RunAnalysis()
     {
-        _diff = DiffChecker.Run("C:\\temp");
+        if (!Directory.Exists(_directoryPath))
+        {
+            _errorMessage = "Directory does not exist.";
+            return;
+        }
+
+        _errorMessage = "";
+        _diff = DiffChecker.Run(_directoryPath);
     }
-    
+
     private void HandleKeyDown(KeyboardEventArgs e)
     {
         if (e.Key == "Enter")
