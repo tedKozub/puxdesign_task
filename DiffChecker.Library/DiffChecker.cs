@@ -2,7 +2,6 @@
 
 public static class DiffChecker
 {
-
     public static DirectoryDiff? Run(string path)
     {
         if (!JsonSerde.CheckIfJsonExists())
@@ -11,12 +10,14 @@ public static class DiffChecker
             JsonSerde.SaveJson(nodes);
             return null;
         }
+
         if (JsonSerde.LoadJson().Path != path)
         {
             var nodes = GenerateSnapshot(path);
             JsonSerde.SaveJson(nodes);
             return null;
         }
+
         var oldSnapshot = JsonSerde.LoadJson();
         var newSnapshot = GenerateSnapshot(path);
         var diff = SnapshotComparer.ReturnFlatDirectoryDiff(oldSnapshot, newSnapshot);
@@ -88,7 +89,4 @@ public static class DiffChecker
 
         return newSnapshot;
     }
-
-
-    
 }
