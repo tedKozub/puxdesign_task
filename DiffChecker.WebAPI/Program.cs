@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Http.HttpResults;
+using Newtonsoft.Json;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -18,7 +21,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 
-app.MapPost("/api/analyze", async (string path) =>
+app.MapPost("/api/analyze", (string path) =>
 {
     if (string.IsNullOrWhiteSpace(path))
     {
@@ -37,10 +40,12 @@ app.MapPost("/api/analyze", async (string path) =>
     {
         return Results.BadRequest(ex.Message);
     }
+    
+    var diff = DiffChecker.DiffChecker.Run(path);
+    if (diff == null) return Results.Ok("Initial snapshot created.");
+    var json = JsonConvert.SerializeObject(diff, Formatting.None);
+    return Results.Ok(json);
 
-    var diffChecker = new DiffChecker.DiffChecker();
-    diffChecker.Run(path);
-    return Results.Ok();
 });
 
 app.Run();
