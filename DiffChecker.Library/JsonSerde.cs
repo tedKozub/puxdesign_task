@@ -4,7 +4,9 @@ namespace DiffChecker;
 
 public static class JsonSerde
 {
-    private static readonly string JsonSaveFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "snapshot.json");
+    // save it inside the project directory, not the bin directory
+    private static string JsonSaveFilePath => Path.Combine(Directory.GetCurrentDirectory(), "snapshot.json");
+    
     
     public static bool CheckIfJsonExists()
     {
