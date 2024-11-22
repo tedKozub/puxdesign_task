@@ -6,10 +6,8 @@
     <script>
         async function analyzeDirectory() {
             const directory = document.getElementById('directoryInput').value;
-            const response = await fetch('/api/analyze', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ path: directory })
+            const response = await fetch(`/api/analyze?path=${encodeURIComponent(directory)}`, {
+                method: 'POST'
             });
             const result = await response.json();
             document.getElementById('result').innerText = JSON.stringify(result, null, 2);

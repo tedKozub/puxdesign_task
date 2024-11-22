@@ -1,5 +1,3 @@
-using DiffChecker.API;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -20,16 +18,16 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 
-app.MapPost("/api/analyze", async (AnalyzeRequest request) =>
+app.MapPost("/api/analyze", async (string path) =>
 {
-    if (string.IsNullOrWhiteSpace(request.Path))
+    if (string.IsNullOrWhiteSpace(path))
     {
         return Results.BadRequest("Invalid or missing 'path' in the request body.");
     }
 
     try
     {
-        var fullPath = Path.GetFullPath(request.Path);
+        var fullPath = Path.GetFullPath(path);
         if (!Directory.Exists(fullPath))
         {
             return Results.BadRequest("Invalid path");
@@ -41,7 +39,7 @@ app.MapPost("/api/analyze", async (AnalyzeRequest request) =>
     }
 
     var diffChecker = new DiffChecker.DiffChecker();
-    diffChecker.Run(request.Path);
+    diffChecker.Run(path);
     return Results.Ok();
 });
 
