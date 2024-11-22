@@ -4,8 +4,8 @@ namespace DiffChecker;
 
 public static class JsonSerde
 {
-    private const string JsonSaveFilePath = @"C:\Users\teddy\Documents\analysis.json"; // TODO: extract to config
-
+    private static readonly string JsonSaveFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "snapshot.json");
+    
     public static bool CheckIfJsonExists()
     {
         return File.Exists(JsonSaveFilePath);

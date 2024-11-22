@@ -16,4 +16,8 @@
       <ProjectReference Include="..\DiffChecker.Library\DiffChecker.Library.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\" />
+    </ItemGroup>
+
 </Project>

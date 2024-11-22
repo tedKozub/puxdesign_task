@@ -1,102 +1,94 @@
-﻿using Microsoft.VisualBasic;
-using Newtonsoft.Json;
+﻿namespace DiffChecker;
 
-namespace DiffChecker;
-
-public class DiffChecker
+public static class DiffChecker
 {
-    private const string JsonSaveFilePath = @"C:\Users\teddy\Documents\analysis.json"; // TODO: extract to config
-    
-    
-    public void Run(string path)
+
+    public static DirectoryDiff? Run(string path)
     {
-        // validate the path, check if not empty, wrong or if it is even a valid path and not random data
-        
-        
-        
-        if (!CheckIfJsonExists())
+        if (!JsonSerde.CheckIfJsonExists())
         {
-            var nodes = AnalyzeDirectory(path);
-            SaveJSON(nodes); // TODO: make the serde stuff a new static(?) class
-            return;
+            var nodes = GenerateSnapshot(path);
+            JsonSerde.SaveJson(nodes);
+            return null;
         }
-        // if JSON exists, load the JSON, run analysis and compare the two trees
-        var oldDirState = LoadJson();
-        var newDirState = AnalyzeDirectory(path);
-        CompareDirectories(oldDirState, newDirState);
-        // diffChecker.SaveJSON();
-        // diffChecker.Compare();
-        // TODO: return a JSON object with the diff results
+        if (JsonSerde.LoadJson().Path != path)
+        {
+            var nodes = GenerateSnapshot(path);
+            JsonSerde.SaveJson(nodes);
+            return null;
+        }
+        var oldSnapshot = JsonSerde.LoadJson();
+        var newSnapshot = GenerateSnapshot(path);
+        var diff = SnapshotComparer.ReturnFlatDirectoryDiff(oldSnapshot, newSnapshot);
+        var updatedSnapshot = UpdateFileVersions(oldSnapshot, newSnapshot);
+        JsonSerde.SaveJson(updatedSnapshot);
+        return diff;
     }
 
-    private void CompareDirectories(List<FileNode> oldDirState, List<FileNode> newDirState)
+    private static DirectoryNode GenerateSnapshot(string rootPath)
     {
-        // compare the two trees
-        foreach (var oldNode in oldDirState)
+        var directoryNode = new DirectoryNode
         {
-            var newNode = newDirState.Find(n => n.Name == oldNode.Name);
-            if (newNode == null)
+            Name = Path.GetFileName(rootPath),
+            Path = rootPath
+        };
+
+        foreach (var filePath in Directory.GetFiles(rootPath))
+        {
+            directoryNode.Files.Add(CreateFileNode(filePath));
+        }
+
+        foreach (var subdirPath in Directory.GetDirectories(rootPath))
+        {
+            directoryNode.Directories.Add(GenerateSnapshot(subdirPath));
+        }
+
+        return directoryNode;
+    }
+
+    private static FileNode CreateFileNode(string filePath)
+    {
+        return new FileNode
+        {
+            Name = Path.GetFileName(filePath),
+            Path = filePath,
+            Version = 1,
+            LastModified = File.GetLastWriteTime(filePath)
+        };
+    }
+
+    private static DirectoryNode UpdateFileVersions(DirectoryNode oldSnapshot, DirectoryNode newSnapshot)
+    {
+        foreach (var newFile in newSnapshot.Files)
+        {
+            var oldFile = oldSnapshot.Files.FirstOrDefault(f => f.Name == newFile.Name);
+
+            if (oldFile == null)
             {
-                // file was deleted
-                Console.WriteLine($"File {oldNode.Name} was deleted");
+                newFile.Version = 1;
             }
-            else if (oldNode.LastModified != newNode.LastModified)
+            else if (newFile.LastModified != oldFile.LastModified)
             {
-                // file was modified
-                Console.WriteLine($"File {oldNode.Name} was modified");
+                newFile.Version = oldFile.Version + 1;
+            }
+            else
+            {
+                newFile.Version = oldFile.Version;
             }
         }
 
-        foreach (var newNode in newDirState)
+        foreach (var newSubdirectory in newSnapshot.Directories)
         {
-            var oldNode = oldDirState.Find(n => n.Name == newNode.Name);
-            if (oldNode == null)
-            {
-                // file was added
-                Console.WriteLine($"File {newNode.Name} was added");
-            }
-        }
-    }
-
-    private List<FileNode> AnalyzeDirectory(string path)
-    {
-        var nodes = new List<FileNode>();
-        var files = Directory.GetFiles(path);
-        foreach (var file in files)
-        {
-            nodes.Add(new FileNode
-            {
-                Name = file,
-                Version = 1,
-                LastModified = File.GetLastWriteTime(file)
-            });
+            var oldSubdirectory = oldSnapshot.Directories.FirstOrDefault(sd => sd.Name == newSubdirectory.Name);
+            UpdateFileVersions(
+                oldSubdirectory ?? new DirectoryNode { Name = newSubdirectory.Name, Files = [], Directories = [] },
+                newSubdirectory
+            );
         }
 
-        return nodes;
+        return newSnapshot;
     }
 
-    public bool CheckIfJsonExists()
-    {
-        // check if the JSON file exists
-        if (File.Exists(JsonSaveFilePath))
-        {
-            return true;
-        }
-        return false;
-    }
 
-    private List<FileNode> LoadJson()
-    {
-        var json = File.ReadAllText(JsonSaveFilePath);
-        var nodes = JsonConvert.DeserializeObject<List<FileNode>>(json);
-        return nodes;
-    }
-    
-    public void SaveJSON(List<FileNode> nodes)
-    {
-        // serialize the nodes to JSON and save to local file
-        var json = JsonConvert.SerializeObject(nodes);
-        File.WriteAllText(JsonSaveFilePath, json);
-    }
     
 }
