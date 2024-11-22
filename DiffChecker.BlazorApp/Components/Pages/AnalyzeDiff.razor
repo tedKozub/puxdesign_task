@@ -1,0 +1,120 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+<PageTitle>Diff Analysis</PageTitle>
+
+<h1>Diff Analysis</h1>
+
+<label for="directoryInput">Enter Directory Path:</label>
+<InputText id="directoryInput" @bind-Value="_directoryPath" placeholder="Enter directory path" @onkeydown="HandleKeyDown" />
+
+
+@if (_diff == null && string.IsNullOrWhiteSpace(_directoryPath))
+{
+<p role="status">Please enter a directory path.</p>
+}
+
+else if (_diff == null)
+{
+    <p role="status">Analysis initial snapshot saved...</p>
+}
+else
+{
+    <h3>Analysis Results:</h3>
+
+    @if (_diff.AddedFiles.Any())
+    {
+        <h4>Added Files:</h4>
+        <ul>
+            @foreach (var file in _diff.AddedFiles)
+            {
+                <li>@file.Path</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No files added.</p>
+    }
+
+    @if (_diff.ModifiedFiles.Any())
+    {
+        <h4>Modified Files:</h4>
+        <ul>
+            @foreach (var file in _diff.ModifiedFiles)
+            {
+                <li>@file.Path - version #@file.Version</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No files modified.</p>
+    }
+
+    @if (_diff.DeletedFiles.Any())
+    {
+        <h4>Deleted Files:</h4>
+        <ul>
+            @foreach (var file in _diff.DeletedFiles)
+            {
+                <li>@file.Path</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No files deleted.</p>
+    }
+
+    @if (_diff.AddedDirectories.Any())
+    {
+        <h4>Added Directories:</h4>
+        <ul>
+            @foreach (var directory in _diff.AddedDirectories)
+            {
+                <li>@directory</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No directories added.</p>
+    }
+
+    @if (_diff.DeletedDirectories.Any())
+    {
+        <h4>Deleted Directories:</h4>
+        <ul>
+            @foreach (var directory in _diff.DeletedDirectories)
+            {
+                <li>@directory</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No directories deleted.</p>
+    }
+}
+
+<button class="btn btn-primary" @onclick="RunAnalysis">Run Analysis</button>
+
+@code {
+    private string _directoryPath = "";
+    private DirectoryDiff? _diff = null;
+
+    private void RunAnalysis()
+    {
+        _diff = DiffChecker.Run("C:\\temp");
+    }
+    
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            RunAnalysis();
+        }
+    }
+
+}
